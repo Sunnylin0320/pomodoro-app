@@ -2,10 +2,11 @@
 
 A focus app for two. Each person can run a Pomodoro timer alone, or invite a
 partner so both timers count down together. The UI is a single scene: a panda
-in a field. During focus the sun sets and the panda slowly lies down; during
-the break the moon comes out and the panda sleeps.
+in a field who loves cheeseburgers. During focus the sun sets, the panda slowly
+lies down, and a cheeseburger waits on the grass. During the break the moon
+comes out: the panda eats the burger, then falls asleep hugging the wrapper.
 
-> Status: living document, last updated 2026-11-25. Items marked
+> Status: living document, last updated 2026-11-27. Items marked
 > **(proposed)** are decided in the phase noted next to them.
 
 ## Contents
@@ -110,8 +111,8 @@ at a glance, whether the other person is focusing or resting.
 | ID | Requirement |
 |---|---|
 | FR-8 | During focus, the sky goes from day to dusk and the sun sets as time passes. |
-| FR-9 | During focus, the panda goes from standing to sitting to lying down. |
-| FR-10 | During a break, it is night, the moon is out, and the panda sleeps. |
+| FR-9 | During focus, the panda goes from standing to sitting to lying down, next to a cheeseburger. |
+| FR-10 | During a break, it is night and the moon is out. The panda eats the cheeseburger in the first half, then sleeps hugging the empty wrapper. |
 | FR-11 | When paused, the scene freezes and shows a paused indicator. |
 
 ### Installable app (phase 2)
@@ -700,11 +701,11 @@ stateDiagram-v2
 
 | State | Panda scene |
 |---|---|
-| Focus · idle | Morning, panda standing |
+| Focus · idle | Morning, panda standing, cheeseburger on the grass |
 | Focus · running | Sun sets as progress goes from 0 to 1; panda stands, sits, then lies down |
 | Focus · paused | Scene frozen, paused indicator |
-| Break · idle | Night, moon out, panda waiting |
-| Break · running | Panda sleeping, sky slowly brightens towards dawn |
+| Break · idle | Night, moon out, panda holding the cheeseburger |
+| Break · running | Panda eats the burger, then sleeps hugging the wrapper; sky slowly brightens towards dawn |
 | Break · paused | Scene frozen, panda keeps sleeping |
 
 ### 12.2 Sign-up and login
@@ -962,7 +963,7 @@ phase 4.
 | Monorepo with npm workspaces | Shared code without publishing packages. One pull request can change frontend, backend, and shared code together. |
 | Layered backend: routes, controllers, services | Services have no HTTP code, so they are easy to test and reused by REST and WebSocket. |
 | Scene is driven by `progress` (0 to 1) and `status` only | The animation has no state of its own, so it can never drift from the timer. |
-| Panda poses are discrete (stand, sit, lie, sleep) with smooth transitions | Continuous shape morphing is much harder and often looks odd. The sky and sun change continuously. |
+| Panda poses are discrete (stand, sit, lie, eat, sleep) with smooth transitions | Continuous shape morphing is much harder and often looks odd. The sky and sun change continuously. |
 | WebSocket only in duo mode | Keeps Cloud Run idle, and free, the rest of the time. |
 | REST goes through a Vercel rewrite | Same-origin requests keep the auth cookie first-party, which avoids third-party cookie blocking in Safari and removes the need for CORS. |
 | WebSocket uses short-lived tickets | The socket goes straight to Cloud Run, a different domain, so the cookie is not sent. A ticket proves who the user is without exposing the session. |
