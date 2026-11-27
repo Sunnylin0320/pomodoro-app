@@ -79,8 +79,7 @@ The full design, including the plans for accounts and two-person rooms, is in
 
 ## Run it locally
 
-You need Node.js 20.19+ or 22.12+ (required by Vite 8) and npm 11. Older npm
-versions read the lock file differently, and `npm ci` fails.
+You need Node.js 20.19+ or 22.12+ (required by Vite 8).
 
 ```bash
 npm install

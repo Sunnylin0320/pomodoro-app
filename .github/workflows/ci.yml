@@ -34,11 +34,6 @@ jobs:
           # Reuse downloaded packages between runs. The cache key comes from package-lock.json.
           cache: npm
 
-      - name: Use npm 11
-        # Node 22 comes with npm 10, which reads our npm 11 lock file differently
-        # and fails `npm ci`. Use the same npm major as development.
-        run: npm install -g npm@11
-
       - name: Install dependencies
         # Installs exactly what package-lock.json says, and fails if it is out of date.
         run: npm ci
