@@ -1,17 +1,19 @@
 import { TimerControls } from './components/TimerControls'
+import { useTimer } from './timer/useTimer'
 
 function App() {
+  const timer = useTimer()
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-emerald-50 p-6">
-      {/* Fake data for now. Lesson 3 replaces it with the useTimer hook. */}
       <TimerControls
-        mode="focus"
-        status="idle"
-        remainingMs={25 * 60_000}
-        onStart={() => console.log('start')}
-        onPause={() => console.log('pause')}
-        onReset={() => console.log('reset')}
-        onSkip={() => console.log('skip')}
+        mode={timer.mode}
+        status={timer.status}
+        remainingMs={timer.remainingMs}
+        onStart={timer.start}
+        onPause={timer.pause}
+        onReset={timer.reset}
+        onSkip={timer.skip}
       />
     </main>
   )
