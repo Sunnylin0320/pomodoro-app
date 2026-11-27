@@ -1,0 +1,50 @@
+# Checks every push to main and every pull request: lint, test, and build.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The workflow only needs to read the code.
+permissions:
+  contents: read
+
+# A new push to the same branch cancels the run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+        with:
+          # No later step pushes to Git, so don't keep the token around.
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          # Reuse downloaded packages between runs. The cache key comes from package-lock.json.
+          cache: npm
+
+      - name: Install dependencies
+        # Installs exactly what package-lock.json says, and fails if it is out of date.
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        # Runs once and exits. Plain `npm test` would start watch mode and never finish.
+        run: npm run test:run
+
+      - name: Build
+        # Type-checks with tsc, then builds with Vite.
+        run: npm run build

@@ -1,5 +1,7 @@
 # 🐼 Panda Pomodoro
 
+[![CI](https://github.com/Sunnylin0320/pomodoro-app/actions/workflows/ci.yml/badge.svg)](https://github.com/Sunnylin0320/pomodoro-app/actions/workflows/ci.yml)
+
 A Pomodoro timer with a panda who loves cheeseburgers. Built for two people to
 focus together, one phase at a time.
 
