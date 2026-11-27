@@ -23,8 +23,8 @@ export type TimerState = {
 const MINUTE_MS = 60_000
 
 export const DURATIONS_MS: Readonly<Record<Mode, number>> = {
-  focus: 25 * MINUTE_MS,
-  break: 5 * MINUTE_MS,
+  focus: 0.1 * MINUTE_MS,
+  break: 0.1 * MINUTE_MS,
 }
 
 export function createTimer(mode: Mode = 'focus'): TimerState {

@@ -1,4 +1,4 @@
-import { Cheeseburger } from './Cheeseburger'
+import { BurgerWrapper, Cheeseburger } from './Cheeseburger'
 import type { PandaPose } from './sky'
 
 // Tweak the panda's look here.
@@ -35,11 +35,11 @@ export function Panda({ pose }: PandaProps) {
     case 'sitting':
       return <Sitting />
     case 'lying':
-      return <Lying eyes="sleepy" />
+      return <Lying eyes="sleepy" hugging={false} />
     case 'eating':
       return <Eating />
     case 'sleeping':
-      return <Lying eyes="closed" />
+      return <Lying eyes="closed" hugging />
   }
 }
 
@@ -94,23 +94,50 @@ function Eating() {
   )
 }
 
-/** Lying on its belly, chin on its paws. Shared by "lying" and "sleeping". */
-function Lying({ eyes }: { eyes: Eyes }) {
+/**
+ * Lying on its belly, head tilted and resting. Shared by "lying" (tired, chin
+ * on its paws) and "sleeping" (hugging the empty burger wrapper).
+ */
+function Lying({ eyes, hugging }: { eyes: Eyes; hugging: boolean }) {
   return (
     <g className={BREATHE} style={FROM_FEET}>
-      <ellipse cx={8} cy={-8.5} rx={22} ry={8.5} {...OUTLINED} />
-      <ellipse cx={25} cy={-3} rx={6} ry={3.5} fill={INK} />
-      <Head x={-16} y={-14} eyes={eyes} />
-      {/* Front paws, drawn after the head so they sit in front of the chin. */}
-      <ellipse cx={-23} cy={-2} rx={5.5} ry={3} fill={INK} />
-      <ellipse cx={-9} cy={-2} rx={5.5} ry={3} fill={INK} />
+      {/* The tail is drawn first, so the body covers half of it. */}
+      <circle cx={29} cy={-16} r={3.2} {...OUTLINED} />
+      <ellipse cx={8} cy={-11} rx={21} ry={11} {...OUTLINED} />
+      {/*
+        Dark fur over the shoulders. It starts behind the head and slants down
+        into the front legs, so head, shoulders and paws read as one body.
+      */}
+      <ellipse cx={-1} cy={-10} rx={7} ry={11} fill={INK} transform="rotate(20 -1 -10)" />
+      {/* Back leg. Its bottom covers the body's outline, so the leg grows out of the body. */}
+      <ellipse cx={18} cy={-5.5} rx={8} ry={6} fill={INK} />
+      <Foot x={23} />
+
+      <Head x={-17} y={hugging ? -16 : -14} eyes={eyes} tilt={-8} />
+
+      {/* Drawn after the head, so they sit in front of the chin. */}
+      {hugging ? (
+        <>
+          <g transform="translate(-19 0)">
+            <BurgerWrapper />
+          </g>
+          {/* One arm wrapped around the wrapper. */}
+          <ellipse cx={-7.5} cy={-5.5} rx={9} ry={3.6} fill={INK} transform="rotate(-16 -7.5 -5.5)" />
+        </>
+      ) : (
+        <>
+          <ellipse cx={-24} cy={-2} rx={5.5} ry={3} fill={INK} />
+          <ellipse cx={-10} cy={-2} rx={5.5} ry={3} fill={INK} />
+        </>
+      )}
+
       {eyes === 'closed' && (
         // Floating z's while asleep.
         <g className="motion-safe:animate-float-up" style={{ transformBox: 'fill-box' }}>
-          <text x={4} y={-24} fontSize={10} fontWeight={700} fill={WHITE}>
+          <text x={0} y={-28} fontSize={10} fontWeight={700} fill={WHITE}>
             z
           </text>
-          <text x={11} y={-33} fontSize={8} fontWeight={700} fill={WHITE}>
+          <text x={7} y={-37} fontSize={8} fontWeight={700} fill={WHITE}>
             z
           </text>
         </g>
@@ -136,9 +163,9 @@ function Foot({ x }: { x: number }) {
  * The head, drawn around its own center and moved to (x, y).
  * Big and round on purpose: a big head and small body read as "cute".
  */
-function Head({ x, y, eyes }: { x: number; y: number; eyes: Eyes }) {
+function Head({ x, y, eyes, tilt = 0 }: { x: number; y: number; eyes: Eyes; tilt?: number }) {
   return (
-    <g transform={`translate(${x} ${y})`}>
+    <g transform={`translate(${x} ${y}) rotate(${tilt})`}>
       {/* The tuft of fur is drawn first, so the face covers its bottom half. */}
       <path d="M-3.5 -12.5 Q-1.5 -19 0.5 -15.5 Q2 -18.5 3.5 -12.5 Z" {...OUTLINED} />
       <circle cx={-12.5} cy={-10} r={6} fill={INK} />

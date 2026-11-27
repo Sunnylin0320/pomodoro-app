@@ -5,6 +5,8 @@ const SESAME = '#FFF4DC'
 const PATTY = '#7B4A2D'
 const CHEESE = '#FFD23F'
 const LETTUCE = '#8CC63F'
+const PAPER = '#F8EACB'
+const CREASE = '#D8C394'
 /** Thinner than the panda's, so the thin layers still show when the burger is small. */
 const OUTLINE = 1
 
@@ -48,6 +50,30 @@ export function Cheeseburger({ bitten = false }: CheeseburgerProps) {
         <ellipse cx={-1} cy={-15.5} rx={1} ry={0.6} transform="rotate(15 -1 -15.5)" />
         <ellipse cx={4.5} cy={-17} rx={1} ry={0.6} transform="rotate(25 4.5 -17)" />
       </g>
+    </g>
+  )
+}
+
+/**
+ * The crumpled, empty wrapper left after the burger is eaten. The sleeping
+ * panda hugs it like a pillow. (0, 0) is the middle of its bottom edge.
+ */
+export function BurgerWrapper() {
+  return (
+    <g>
+      <path
+        d="M-8.5 0 L-9.5 -3.2 L-7 -7 L-2.5 -5.8 L1 -8 L5.5 -6.4 L8.8 -3.6 L8.2 0 Z"
+        fill={PAPER}
+        {...OUTLINED}
+      />
+      {/* Creases in the paper. */}
+      <path
+        d="M-6.5 -5.5 L-4.5 -2 M1 -6.5 L0 -2.5 M5.5 -5 L4 -1.5"
+        fill="none"
+        stroke={CREASE}
+        strokeWidth={0.8}
+        strokeLinecap="round"
+      />
     </g>
   )
 }

@@ -11,6 +11,9 @@
   --animate-breathe: breathe 3.5s ease-in-out infinite;
   --animate-float-up: float-up 3s ease-in-out infinite;
   --animate-munch: munch 0.9s ease-in-out infinite;
+  --animate-drift: drift 20s ease-in-out infinite alternate;
+  --animate-twinkle: twinkle 2.4s ease-in-out infinite alternate;
+  --animate-sway: sway 4s ease-in-out infinite alternate;
 
   /* Appear smoothly, for example when the panda changes pose. */
   @keyframes fade-in {
@@ -41,6 +44,36 @@
     }
     50% {
       transform: translateY(-1.5px);
+    }
+  }
+
+  /* Clouds drift a little to the side and back. Each cloud sets its own duration. */
+  @keyframes drift {
+    from {
+      transform: translateX(-3px);
+    }
+    to {
+      transform: translateX(3px);
+    }
+  }
+
+  /* Stars fade in and out. */
+  @keyframes twinkle {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.3;
+    }
+  }
+
+  /* Bamboo leans a little left and right, from its base. */
+  @keyframes sway {
+    from {
+      transform: rotate(-1.5deg);
+    }
+    to {
+      transform: rotate(1.5deg);
     }
   }
 
