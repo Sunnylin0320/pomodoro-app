@@ -1,11 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TimerControls } from './components/TimerControls'
 import { PandaScene } from './scene/PandaScene'
 import { ScenePreview, type ScenePreviewState } from './scene/ScenePreview'
+import { playChime, unlockAudio } from './sound/chime'
+import { getDocumentTitle } from './timer/title'
 import { useTimer } from './timer/useTimer'
 
 function App() {
-  const timer = useTimer()
+  const timer = useTimer({ onFinish: playChime })
+
+  // Show the countdown in the browser tab. Only touches the page when the text changes.
+  const title = getDocumentTitle(timer.mode, timer.status, timer.remainingMs)
+  useEffect(() => {
+    document.title = title
+  }, [title])
+
+  function handleStart() {
+    // Browsers only allow sound after a click, so get audio ready now for the chime later.
+    unlockAudio()
+    timer.start()
+  }
+
   const [preview, setPreview] = useState<ScenePreviewState>({
     enabled: false,
     mode: 'focus',
@@ -28,7 +43,7 @@ function App() {
         mode={timer.mode}
         status={timer.status}
         remainingMs={timer.remainingMs}
-        onStart={timer.start}
+        onStart={handleStart}
         onPause={timer.pause}
         onReset={timer.reset}
         onSkip={timer.skip}
