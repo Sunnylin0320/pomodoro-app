@@ -17,7 +17,8 @@ type ScenePreviewProps = {
  */
 export function ScenePreview({ value, onChange }: ScenePreviewProps) {
   return (
-    <fieldset className="fixed right-4 bottom-4 w-64 rounded-xl border border-slate-300 bg-white/90 p-4 text-sm text-slate-700 shadow-lg">
+    // On phones it sits at the end of the page; from the `sm` breakpoint up it floats in the corner.
+    <fieldset className="w-full max-w-sm rounded-xl border border-slate-300 bg-white/90 p-4 text-sm text-slate-700 shadow-lg sm:fixed sm:right-4 sm:bottom-4 sm:w-64">
       <legend className="px-1 font-semibold">Scene preview (dev only)</legend>
 
       <label className="flex items-center gap-2">

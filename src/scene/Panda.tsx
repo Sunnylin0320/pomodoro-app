@@ -5,6 +5,13 @@ const BLACK = '#2C2C2A'
 const WHITE = '#FFFFFF'
 const OUTLINE = 1.5
 
+/**
+ * SVG groups scale from the scene's origin by default. This makes the
+ * breathing animation scale from the bottom of the panda (its feet) instead.
+ */
+const FROM_FEET = { transformBox: 'fill-box', transformOrigin: 'center bottom' } as const
+const BREATHE = 'motion-safe:animate-breathe'
+
 type PandaProps = {
   pose: PandaPose
 }
@@ -28,7 +35,7 @@ export function Panda({ pose }: PandaProps) {
 
 function Standing() {
   return (
-    <g>
+    <g className={BREATHE} style={FROM_FEET}>
       <rect x={-8} y={-14} width={6} height={15} rx={2} fill={BLACK} />
       <rect x={2} y={-14} width={6} height={15} rx={2} fill={BLACK} />
       <ellipse cx={0} cy={-26} rx={15} ry={18} fill={WHITE} stroke={BLACK} strokeWidth={OUTLINE} />
@@ -41,7 +48,7 @@ function Standing() {
 
 function Sitting() {
   return (
-    <g>
+    <g className={BREATHE} style={FROM_FEET}>
       <ellipse cx={0} cy={-14} rx={18} ry={15} fill={WHITE} stroke={BLACK} strokeWidth={OUTLINE} />
       <ellipse cx={-13} cy={-1} rx={7} ry={4} fill={BLACK} />
       <ellipse cx={13} cy={-1} rx={7} ry={4} fill={BLACK} />
@@ -71,7 +78,7 @@ function Head({ y }: { y: number }) {
 /** Lying on its belly, head resting on its paws. Shared by "lying" and "sleeping". */
 function Lying({ eyes }: { eyes: 'open' | 'closed' }) {
   return (
-    <g>
+    <g className={BREATHE} style={FROM_FEET}>
       <ellipse cx={8} cy={-8} rx={26} ry={9} fill={WHITE} stroke={BLACK} strokeWidth={OUTLINE} />
       <ellipse cx={28} cy={-1} rx={6} ry={3} fill={BLACK} />
       <ellipse cx={-20} cy={-1} rx={11} ry={3} fill={BLACK} />
@@ -93,12 +100,14 @@ function Lying({ eyes }: { eyes: 'open' | 'closed' }) {
             <path d="M-27 -13 Q-25 -10 -23 -13" />
             <path d="M-17 -13 Q-15 -10 -13 -13" />
           </g>
-          <text x={-8} y={-28} fontSize={10} fontWeight={600} fill={WHITE}>
-            z
-          </text>
-          <text x={-1} y={-37} fontSize={8} fontWeight={600} fill={WHITE}>
-            z
-          </text>
+          <g className="motion-safe:animate-float-up" style={{ transformBox: 'fill-box' }}>
+            <text x={-8} y={-28} fontSize={10} fontWeight={600} fill={WHITE}>
+              z
+            </text>
+            <text x={-1} y={-37} fontSize={8} fontWeight={600} fill={WHITE}>
+              z
+            </text>
+          </g>
         </g>
       )}
       <circle cx={-20} cy={-7} r={1.4} fill={BLACK} />

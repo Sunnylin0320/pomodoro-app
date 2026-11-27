@@ -13,13 +13,13 @@ function App() {
   })
 
   // In development, the preview panel can take over the scene.
-  const usePreview = import.meta.env.DEV && preview.enabled
-  const scene = usePreview
+  const isPreviewing = import.meta.env.DEV && preview.enabled
+  const scene = isPreviewing
     ? { mode: preview.mode, status: 'running' as const, progress: preview.progress }
     : { mode: timer.mode, status: timer.status, progress: timer.progress }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-emerald-50 p-6">
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-8 bg-emerald-50 px-6 py-10">
       <div className="w-full max-w-sm overflow-hidden rounded-3xl shadow-md">
         <PandaScene mode={scene.mode} status={scene.status} progress={scene.progress} />
       </div>
