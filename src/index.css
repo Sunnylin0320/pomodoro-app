@@ -10,6 +10,7 @@
   --animate-fade-in: fade-in 700ms ease-out both;
   --animate-breathe: breathe 3.5s ease-in-out infinite;
   --animate-float-up: float-up 3s ease-in-out infinite;
+  --animate-munch: munch 0.9s ease-in-out infinite;
 
   /* Appear smoothly, for example when the panda changes pose. */
   @keyframes fade-in {
@@ -29,6 +30,17 @@
     }
     50% {
       transform: scaleY(1.03);
+    }
+  }
+
+  /* The cheeseburger and paws bob up and down while the panda eats. */
+  @keyframes munch {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-1.5px);
     }
   }
 

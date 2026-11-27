@@ -1,4 +1,5 @@
 import type { Mode, Status } from '../timer/timer'
+import { Cheeseburger } from './Cheeseburger'
 import { Panda } from './Panda'
 import {
   HORIZON_Y,
@@ -31,7 +32,9 @@ const STARS = [
   { x: 90, y: 38, r: 0.6 },
   { x: 20, y: 34, r: 0.4 },
 ]
-const PANDA_POSITION = { x: 50, scale: 0.55 }
+const PANDA_POSITION = { x: 50, scale: 0.7 }
+/** During focus, the cheeseburger waits on the grass next to the panda. */
+const BURGER_POSITION = { x: 82, scale: 0.42 }
 
 /** When the mode switches, the sky and ground fade to their new color. */
 const COLOR_TRANSITION = 'motion-safe:transition-[fill] motion-safe:duration-1000'
@@ -46,6 +49,7 @@ const POSE_DESCRIPTIONS: Record<PandaPose, string> = {
   standing: 'standing',
   sitting: 'sitting',
   lying: 'lying down',
+  eating: 'eating a cheeseburger',
   sleeping: 'asleep',
 }
 
@@ -57,7 +61,7 @@ export function PandaScene({ mode, status, progress }: PandaSceneProps) {
   const groundColor = isFocus ? colorAt(FOCUS_GROUND, progress) : NIGHT_GROUND
 
   const label = isFocus
-    ? `Panda ${POSE_DESCRIPTIONS[pose]} while the sun sets`
+    ? `Panda ${POSE_DESCRIPTIONS[pose]} next to a cheeseburger while the sun sets`
     : `Panda ${POSE_DESCRIPTIONS[pose]} under the moon`
 
   return (
@@ -85,6 +89,12 @@ export function PandaScene({ mode, status, progress }: PandaSceneProps) {
       )}
 
       <rect y={HORIZON_Y} width={100} height={100 - HORIZON_Y} fill={groundColor} className={COLOR_TRANSITION} />
+
+      {isFocus && (
+        <g transform={`translate(${BURGER_POSITION.x} ${HORIZON_Y + 2}) scale(${BURGER_POSITION.scale})`}>
+          <Cheeseburger />
+        </g>
+      )}
 
       <g transform={`translate(${PANDA_POSITION.x} ${HORIZON_Y + 2}) scale(${PANDA_POSITION.scale})`}>
         {/* A new key on every pose change makes React mount a fresh group, which replays the fade-in. */}

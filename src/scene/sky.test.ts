@@ -29,8 +29,12 @@ describe('getPandaPose', () => {
     expect(getPandaPose('focus', 1)).toBe('lying')
   })
 
-  it('sleeps for the whole break', () => {
-    expect(getPandaPose('break', 0)).toBe('sleeping')
+  it('eats the cheeseburger during the first half of the break', () => {
+    expect(getPandaPose('break', 0)).toBe('eating')
+    expect(getPandaPose('break', 0.49)).toBe('eating')
+  })
+
+  it('sleeps during the second half of the break', () => {
     expect(getPandaPose('break', 0.5)).toBe('sleeping')
     expect(getPandaPose('break', 1)).toBe('sleeping')
   })

@@ -6,7 +6,7 @@
 
 import type { Mode } from '../timer/timer'
 
-export type PandaPose = 'standing' | 'sitting' | 'lying' | 'sleeping'
+export type PandaPose = 'standing' | 'sitting' | 'lying' | 'eating' | 'sleeping'
 
 export type Rgb = { r: number; g: number; b: number }
 
@@ -33,8 +33,15 @@ export const BREAK_SKY: ColorStop[] = [
   { at: 1, color: '#85B7EB' },
 ]
 
+/** During a break, the panda eats its cheeseburger until this point, then sleeps. */
+export const EATING_UNTIL = 0.5
+
+/**
+ * The panda's story: it holds on through focus (standing, sitting, then lying
+ * down), earns the cheeseburger at the break, eats it, and falls asleep full.
+ */
 export function getPandaPose(mode: Mode, progress: number): PandaPose {
-  if (mode === 'break') return 'sleeping'
+  if (mode === 'break') return progress < EATING_UNTIL ? 'eating' : 'sleeping'
   if (progress < 1 / 3) return 'standing'
   if (progress < 2 / 3) return 'sitting'
   return 'lying'
