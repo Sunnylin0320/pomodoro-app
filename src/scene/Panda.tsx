@@ -1,4 +1,5 @@
 import { BurgerWrapper, Cheeseburger } from './Cheeseburger'
+import { limb } from './shapes'
 import type { PandaPose } from './sky'
 
 // Tweak the panda's look here.
@@ -17,6 +18,21 @@ const OUTLINED = { fill: WHITE, stroke: INK, strokeWidth: OUTLINE, strokeLinejoi
  */
 const FROM_FEET = { transformBox: 'fill-box', transformOrigin: 'center bottom' } as const
 const BREATHE = 'motion-safe:animate-breathe'
+
+/*
+ * Body shapes, drawn with curves (C) instead of plain ellipses, so they look
+ * soft and a little uneven, like a real body: narrower at the shoulders,
+ * fuller at the belly.
+ */
+/** Ends above the ground, so the short legs show underneath. */
+const STANDING_BODY = 'M0 -31 C8 -31 12.5 -22 12.5 -14 C12.5 -8 7 -5.5 0 -5.5 C-7 -5.5 -12.5 -8 -12.5 -14 C-12.5 -22 -8 -31 0 -31 Z'
+const SITTING_BODY = 'M0 -26 C10 -26 15 -17 15 -10 C15 -3.5 9 0 0 0 C-9 0 -15 -3.5 -15 -10 C-15 -17 -10 -26 0 -26 Z'
+/** Low at the shoulders under the head, higher and rounder at the back. */
+const LYING_BODY = 'M-12 -12 C-12 -19 -4 -22 6 -22 C18 -22 29 -18 29 -9 C29 -3 24 0 17 0 L-6 0 C-10 0 -12 -6 -12 -12 Z'
+/** The lying panda's back leg: a rounded thigh resting on the ground. */
+const BACK_LEG = 'M10 -1 C8.5 -9 13 -16.5 19.5 -16 C25.5 -15.5 28.5 -8.5 27.5 -3.5 C27 0 23 1 18 1 Z'
+/** A round head, a little fuller at the cheeks than at the top. */
+const HEAD = 'M0 -14 C11 -14 17 -8 17 1 C17 9 9.5 13.5 0 13.5 C-9.5 13.5 -17 9 -17 1 C-17 -8 -11 -14 0 -14 Z'
 
 type Eyes = 'open' | 'happy' | 'sleepy' | 'closed'
 
@@ -47,10 +63,10 @@ export function Panda({ pose }: PandaProps) {
 function Standing() {
   return (
     <g className={BREATHE} style={FROM_FEET}>
-      <ellipse cx={0} cy={-17} rx={12.5} ry={12} {...OUTLINED} />
-      {/* Legs, drawn over the body so the dark fur meets the white belly. */}
-      <rect x={-9} y={-11} width={7.5} height={11} rx={3.5} fill={INK} />
-      <rect x={1.5} y={-11} width={7.5} height={11} rx={3.5} fill={INK} />
+      {/* Legs, drawn before the body: the belly's outline overlaps their tops, and only the feet show below. */}
+      <path d={limb({ x: -5.5, y: -8 }, { x: -6, y: -3.6 }, 3.8, 3.6)} fill={INK} />
+      <path d={limb({ x: 5.5, y: -8 }, { x: 6, y: -3.6 }, 3.8, 3.6)} fill={INK} />
+      <path d={STANDING_BODY} {...OUTLINED} />
       {/* Left arm down, right arm waving. */}
       <ellipse cx={-11.5} cy={-18} rx={3.8} ry={7} fill={INK} transform="rotate(20 -11.5 -18)" />
       <ellipse cx={16} cy={-24} rx={3.8} ry={7} fill={INK} transform="rotate(55 16 -24)" />
@@ -63,12 +79,12 @@ function Standing() {
 function Sitting() {
   return (
     <g className={BREATHE} style={FROM_FEET}>
-      <ellipse cx={0} cy={-12} rx={15} ry={12.5} {...OUTLINED} />
-      <Foot x={-11} />
-      <Foot x={11} />
+      <path d={SITTING_BODY} {...OUTLINED} />
       {/* Arms resting on the belly. */}
       <ellipse cx={-10.5} cy={-15} rx={3.8} ry={7} fill={INK} transform="rotate(-25 -10.5 -15)" />
       <ellipse cx={10.5} cy={-15} rx={3.8} ry={7} fill={INK} transform="rotate(25 10.5 -15)" />
+      <Foot x={-11} />
+      <Foot x={11} />
       <Head x={0} y={-30} eyes="open" />
     </g>
   )
@@ -78,7 +94,7 @@ function Sitting() {
 function Eating() {
   return (
     <g className={BREATHE} style={FROM_FEET}>
-      <ellipse cx={0} cy={-12} rx={15} ry={12.5} {...OUTLINED} />
+      <path d={SITTING_BODY} {...OUTLINED} />
       <Foot x={-11} />
       <Foot x={11} />
       <Head x={0} y={-30} eyes="happy" />
@@ -102,16 +118,19 @@ function Lying({ eyes, hugging }: { eyes: Eyes; hugging: boolean }) {
   return (
     <g className={BREATHE} style={FROM_FEET}>
       {/* The tail is drawn first, so the body covers half of it. */}
-      <circle cx={29} cy={-16} r={3.2} {...OUTLINED} />
-      <ellipse cx={8} cy={-11} rx={21} ry={11} {...OUTLINED} />
-      {/*
-        Dark fur over the shoulders. It starts behind the head and slants down
-        into the front legs, so head, shoulders and paws read as one body.
-      */}
-      <ellipse cx={-1} cy={-10} rx={7} ry={11} fill={INK} transform="rotate(20 -1 -10)" />
-      {/* Back leg. Its bottom covers the body's outline, so the leg grows out of the body. */}
-      <ellipse cx={18} cy={-5.5} rx={8} ry={6} fill={INK} />
+      <circle cx={28.5} cy={-15} r={3.2} {...OUTLINED} />
+      <path d={LYING_BODY} {...OUTLINED} />
+      {/* Back leg: a round thigh with its sole turned toward us. */}
+      <path d={BACK_LEG} fill={INK} />
       <Foot x={23} />
+      {/*
+        Shoulder and front leg in one tapered shape. It is drawn before the
+        head, so the head covers its top and the paw comes out under the chin.
+      */}
+      <path
+        d={hugging ? limb({ x: 2, y: -14 }, { x: -4, y: -6 }, 7.5, 4.5) : limb({ x: 2, y: -14 }, { x: -6, y: -3 }, 7.5, 4)}
+        fill={INK}
+      />
 
       <Head x={-17} y={hugging ? -16 : -14} eyes={eyes} tilt={-8} />
 
@@ -121,13 +140,13 @@ function Lying({ eyes, hugging }: { eyes: Eyes; hugging: boolean }) {
           <g transform="translate(-19 0)">
             <BurgerWrapper />
           </g>
-          {/* One arm wrapped around the wrapper. */}
+          {/* The forearm wrapped around the wrapper. */}
           <ellipse cx={-7.5} cy={-5.5} rx={9} ry={3.6} fill={INK} transform="rotate(-16 -7.5 -5.5)" />
         </>
       ) : (
         <>
-          <ellipse cx={-24} cy={-2} rx={5.5} ry={3} fill={INK} />
-          <ellipse cx={-10} cy={-2} rx={5.5} ry={3} fill={INK} />
+          <ellipse cx={-24} cy={-2.4} rx={5} ry={3} fill={INK} />
+          <ellipse cx={-10} cy={-2.4} rx={5} ry={3} fill={INK} />
         </>
       )}
 
@@ -166,11 +185,9 @@ function Foot({ x }: { x: number }) {
 function Head({ x, y, eyes, tilt = 0 }: { x: number; y: number; eyes: Eyes; tilt?: number }) {
   return (
     <g transform={`translate(${x} ${y}) rotate(${tilt})`}>
-      {/* The tuft of fur is drawn first, so the face covers its bottom half. */}
-      <path d="M-3.5 -12.5 Q-1.5 -19 0.5 -15.5 Q2 -18.5 3.5 -12.5 Z" {...OUTLINED} />
       <circle cx={-12.5} cy={-10} r={6} fill={INK} />
       <circle cx={12.5} cy={-10} r={6} fill={INK} />
-      <ellipse cx={0} cy={0} rx={17} ry={14.5} {...OUTLINED} />
+      <path d={HEAD} {...OUTLINED} />
 
       {/* Eye patches, tilted so they droop toward the cheeks. */}
       <ellipse cx={-7} cy={0.5} rx={4.4} ry={5.4} fill={INK} transform="rotate(30 -7 0.5)" />
