@@ -1,13 +1,27 @@
 import { useEffect, useState } from 'react'
+import { TaskInput } from './components/TaskInput'
 import { TimerControls } from './components/TimerControls'
+import { TodayHistory } from './components/TodayHistory'
+import { getTodaySessions } from './history/history'
+import { useSessions } from './history/useSessions'
 import { PandaScene } from './scene/PandaScene'
 import { ScenePreview, type ScenePreviewState } from './scene/ScenePreview'
 import { playChime, unlockAudio } from './sound/chime'
 import { getDocumentTitle } from './timer/title'
+import { DURATIONS_MS, type Mode } from './timer/timer'
 import { useTimer } from './timer/useTimer'
 
 function App() {
-  const timer = useTimer({ onFinish: playChime })
+  const [task, setTask] = useState('')
+  const { sessions, addFocusSession } = useSessions()
+
+  function handleFinish(finishedMode: Mode) {
+    playChime(finishedMode)
+    // Only finished focus sessions go into the history. The task name is kept for the next one.
+    if (finishedMode === 'focus') addFocusSession(task, DURATIONS_MS.focus)
+  }
+
+  const timer = useTimer({ onFinish: handleFinish })
 
   // Show the countdown in the browser tab. Only touches the page when the text changes.
   const title = getDocumentTitle(timer.mode, timer.status, timer.remainingMs)
@@ -39,6 +53,8 @@ function App() {
         <PandaScene mode={scene.mode} status={scene.status} progress={scene.progress} />
       </div>
 
+      <TaskInput value={task} onChange={setTask} />
+
       <TimerControls
         mode={timer.mode}
         status={timer.status}
@@ -48,6 +64,8 @@ function App() {
         onReset={timer.reset}
         onSkip={timer.skip}
       />
+
+      <TodayHistory sessions={getTodaySessions(sessions, timer.now)} />
 
       {import.meta.env.DEV && <ScenePreview value={preview} onChange={setPreview} />}
     </main>

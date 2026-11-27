@@ -38,7 +38,7 @@ export function startOfDay(now: number): number {
 /** Sessions that finished today (local time), oldest first. */
 export function getTodaySessions(sessions: readonly Session[], now: number): Session[] {
   const dayStart = startOfDay(now)
-  return sessions.filter((session) => session.endedAt >= dayStart && session.endedAt <= now)
+  return sessions.filter((session) => session.endedAt >= dayStart)
 }
 
 export function getTotalMs(sessions: readonly Session[]): number {

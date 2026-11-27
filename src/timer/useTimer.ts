@@ -25,6 +25,8 @@ export type UseTimer = {
   status: Status
   remainingMs: number
   progress: number
+  /** The time (ms) of the latest refresh. Use it instead of calling Date.now() while rendering. */
+  now: number
   start: () => void
   pause: () => void
   reset: () => void
@@ -102,6 +104,7 @@ export function useTimer({ onFinish }: UseTimerOptions = {}): UseTimer {
     status: timer.status,
     remainingMs: getRemainingMs(timer, now),
     progress: getProgress(timer, now),
+    now,
     start,
     pause,
     reset,
